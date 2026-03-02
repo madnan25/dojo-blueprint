@@ -154,6 +154,20 @@
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .hero-cta-group .btn-primary,
+  .hero-cta-group .btn-secondary {
+    min-width: 15rem;
+    min-height: 2.75rem;
+    height: 2.75rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
   }
 
   .btn-primary {
@@ -341,9 +355,9 @@
     font-family: 'DM Mono', monospace;
     font-size: 0.68rem;
     letter-spacing: 0.22em;
-    color: var(--rust);
+    color: var(--gold);
     text-transform: uppercase;
-    border: 1px solid var(--rust);
+    border: 1px solid var(--gold);
     padding: 0.35rem 1.1rem;
     white-space: nowrap;
   }
@@ -358,7 +372,7 @@
     font-size: 0.6rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--rust);
+    color: var(--gold);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -370,7 +384,7 @@
     display: block;
     width: 30px;
     height: 1px;
-    background: var(--rust);
+    background: var(--gold);
   }
 
   .section-title {
@@ -404,7 +418,7 @@
     align-items: center;
   }
 
-  .origin .section-label { color: var(--rust); }
+  .origin .section-label { color: var(--gold); }
   .origin .section-lead { color: rgba(245,240,232,0.65); }
 
   .dialogue-mockup {
@@ -758,7 +772,7 @@
 
   /* ── ARCHIVE ── */
   .archive { background: var(--ink); color: var(--parchment); }
-  .archive .section-label { color: var(--rust); }
+  .archive .section-label { color: var(--gold); }
   .archive .section-lead { color: rgba(245,240,232,0.6); }
 
   .archive-grid {
@@ -1026,8 +1040,8 @@
     line-height: 1;
   }
 
-  .archive .section-label { color: var(--rust); justify-content: center; }
-  .collaborators .section-label { color: var(--rust); justify-content: center; }
+  .archive .section-label { color: var(--gold); justify-content: center; }
+  .collaborators .section-label { color: var(--gold); justify-content: center; }
   .collaborators .section-label::before { display: none; }
   .collaborators .section-title { color: var(--parchment); }
   .collaborators .section-lead { color: rgba(245,240,232,0.6); margin: 0 auto 4rem; }
@@ -1357,7 +1371,7 @@
 
 <!-- TOPIC CREATION -->
 <section id="topic-creation" style="background:var(--ink);color:var(--parchment);">
-  <div class="section-label" style="color:var(--rust);">Before the Dialogue Begins</div>
+  <div class="section-label" style="color:var(--gold);">Before the Dialogue Begins</div>
   <h2 class="section-title" style="color:var(--parchment);">From the <em>World's Questions</em> to Yours</h2>
   <p class="section-lead" style="color:rgba(245,240,232,0.6);max-width:660px;margin-bottom:4rem;">The Dojo doesn't start with a curated topic list. It starts with what is actually happening — and works backward to what those events reveal about how we think. Every dialogue topic originates in the world, not in the academy.</p>
 
