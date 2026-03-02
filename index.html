@@ -90,6 +90,8 @@
   /* ── HERO ── */
   .hero {
     min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     position: relative;
@@ -100,7 +102,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 8rem 4rem 6rem 6rem;
+    padding: 5rem 4rem 4rem 6rem;
     position: relative;
     z-index: 2;
   }
@@ -111,7 +113,7 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold);
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -130,7 +132,7 @@
     font-weight: 300;
     line-height: 1.05;
     letter-spacing: -0.02em;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
   }
 
   .hero-title em {
@@ -139,12 +141,12 @@
   }
 
   .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 300;
-    line-height: 1.6;
+    line-height: 1.55;
     color: var(--dim);
     max-width: 420px;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     font-style: italic;
   }
 
@@ -205,8 +207,10 @@
 
   .hero-diagram {
     position: relative;
-    width: 420px;
-    height: 420px;
+    width: min(420px, 42vw);
+    height: min(420px, 55vh);
+    max-width: 100%;
+    max-height: 100%;
   }
 
   .diagram-circle {
@@ -217,23 +221,29 @@
   }
 
   .diagram-circle:nth-child(1) {
-    width: 420px; height: 420px;
-    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     border-color: rgba(201,168,76,0.15);
     animation-duration: 60s;
   }
 
   .diagram-circle:nth-child(2) {
-    width: 300px; height: 300px;
-    top: 60px; left: 60px;
+    width: 71.43%;
+    height: 71.43%;
+    top: 14.29%;
+    left: 14.29%;
     border-color: rgba(201,168,76,0.25);
     animation-duration: 40s;
     animation-direction: reverse;
   }
 
   .diagram-circle:nth-child(3) {
-    width: 180px; height: 180px;
-    top: 120px; left: 120px;
+    width: 42.86%;
+    height: 42.86%;
+    top: 28.57%;
+    left: 28.57%;
     border-color: rgba(201,168,76,0.4);
     animation-duration: 25s;
   }
@@ -331,9 +341,9 @@
     font-family: 'DM Mono', monospace;
     font-size: 0.68rem;
     letter-spacing: 0.22em;
-    color: var(--gold);
+    color: var(--rust);
     text-transform: uppercase;
-    border: 1px solid var(--line-gold);
+    border: 1px solid var(--rust);
     padding: 0.35rem 1.1rem;
     white-space: nowrap;
   }
@@ -348,7 +358,7 @@
     font-size: 0.6rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--rust);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -360,7 +370,7 @@
     display: block;
     width: 30px;
     height: 1px;
-    background: var(--gold);
+    background: var(--rust);
   }
 
   .section-title {
@@ -394,7 +404,7 @@
     align-items: center;
   }
 
-  .origin .section-label { color: var(--gold); }
+  .origin .section-label { color: var(--rust); }
   .origin .section-lead { color: rgba(245,240,232,0.65); }
 
   .dialogue-mockup {
@@ -748,7 +758,7 @@
 
   /* ── ARCHIVE ── */
   .archive { background: var(--ink); color: var(--parchment); }
-  .archive .section-label { color: var(--gold); }
+  .archive .section-label { color: var(--rust); }
   .archive .section-lead { color: rgba(245,240,232,0.6); }
 
   .archive-grid {
@@ -1016,7 +1026,8 @@
     line-height: 1;
   }
 
-  .collaborators .section-label { color: var(--gold); justify-content: center; }
+  .archive .section-label { color: var(--rust); justify-content: center; }
+  .collaborators .section-label { color: var(--rust); justify-content: center; }
   .collaborators .section-label::before { display: none; }
   .collaborators .section-title { color: var(--parchment); }
   .collaborators .section-lead { color: rgba(245,240,232,0.6); margin: 0 auto 4rem; }
@@ -1267,7 +1278,7 @@
     <div class="section-label">Where This Began</div>
     <h2 class="section-title">A dialogue that <em>died</em> before it started</h2>
     <p class="section-lead" style="margin-bottom:2rem;">
-      A friend and I sat down to practice Socratic dialogue about religion. Within two minutes, he said: "I already know it's man-made. I just want to hear your views."
+      A friend and I sat down to discuss religion. Within two minutes, he said: "I already know it's man-made. I just want to hear your views."
     </p>
     <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,240,232,0.55);font-weight:300;">
       That wasn't a failure of character. It was a failure of training. Almost nobody is ever taught how to hold a view and question it simultaneously — to treat their own certainty as something worth examining rather than defending. We've built extraordinary platforms for broadcasting opinions. Almost none for questioning them.
@@ -1346,7 +1357,7 @@
 
 <!-- TOPIC CREATION -->
 <section id="topic-creation" style="background:var(--ink);color:var(--parchment);">
-  <div class="section-label" style="color:var(--gold);">Before the Dialogue Begins</div>
+  <div class="section-label" style="color:var(--rust);">Before the Dialogue Begins</div>
   <h2 class="section-title" style="color:var(--parchment);">From the <em>World's Questions</em> to Yours</h2>
   <p class="section-lead" style="color:rgba(245,240,232,0.6);max-width:660px;margin-bottom:4rem;">The Dojo doesn't start with a curated topic list. It starts with what is actually happening — and works backward to what those events reveal about how we think. Every dialogue topic originates in the world, not in the academy.</p>
 
