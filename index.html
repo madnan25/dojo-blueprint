@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dojo — A Blueprint for Epistemic Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --parchment: #f5f0e8;
+    --warm-white: #faf8f4;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --rust: #8b3a2a;
+    --sage: #4a5c4e;
+    --dim: #6b6558;
+    --line: rgba(15,14,12,0.12);
+    --line-gold: rgba(201,168,76,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(245,240,232,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 6rem 6rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--dim);
+    max-width: 420px;
+    margin-bottom: 3rem;
+    font-style: italic;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--parchment);
+    background: var(--ink);
+    padding: 1rem 2rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: var(--rust);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 1rem 2rem;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover {
+    background: var(--ink);
+    color: var(--parchment);
+  }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-diagram {
+    position: relative;
+    width: 420px;
+    height: 420px;
+  }
+
+  .diagram-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--line-gold);
+    animation: rotateSlow linear infinite;
+  }
+
+  .diagram-circle:nth-child(1) {
+    width: 420px; height: 420px;
+    top: 0; left: 0;
+    border-color: rgba(201,168,76,0.15);
+    animation-duration: 60s;
+  }
+
+  .diagram-circle:nth-child(2) {
+    width: 300px; height: 300px;
+    top: 60px; left: 60px;
+    border-color: rgba(201,168,76,0.25);
+    animation-duration: 40s;
+    animation-direction: reverse;
+  }
+
+  .diagram-circle:nth-child(3) {
+    width: 180px; height: 180px;
+    top: 120px; left: 120px;
+    border-color: rgba(201,168,76,0.4);
+    animation-duration: 25s;
+  }
+
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .diagram-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+  }
+
+  .diagram-center-word {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .diagram-center-main {
+    font-size: 2.2rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    margin: 0.3rem 0;
+  }
+
+  .diagram-nodes {
+    position: absolute;
+    inset: 0;
+  }
+
+  .diagram-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .node-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .node-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    white-space: nowrap;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    bottom: -2rem;
+    right: -3rem;
+    font-size: 18rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(15,14,12,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0 6rem;
+    margin: 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .divider-ornament {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 6rem;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .section-lead {
+    font-size: 1.2rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--dim);
+    max-width: 640px;
+    font-style: italic;
+  }
+
+  /* ── ORIGIN STORY ── */
+  .origin {
+    background: var(--ink);
+    color: var(--parchment);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .origin .section-label { color: var(--gold); }
+  .origin .section-lead { color: rgba(245,240,232,0.65); }
+
+  .dialogue-mockup {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid rgba(245,240,232,0.1);
+    padding: 2rem;
+    position: relative;
+  }
+
+  .dialogue-mockup::before {
+    content: 'A dialogue that died before it began';
+    position: absolute;
+    top: -0.7rem;
+    left: 1.5rem;
+    background: var(--ink);
+    padding: 0 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  .dialogue-message {
+    margin-bottom: 1.2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .dialogue-message:last-child { margin-bottom: 0; }
+
+  .msg-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-top: 0.15rem;
+    white-space: nowrap;
+    min-width: 40px;
+  }
+
+  .msg-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(245,240,232,0.8);
+    font-style: italic;
+  }
+
+  .msg-text.flagged {
+    color: rgba(245,240,232,0.4);
+    text-decoration: line-through;
+    text-decoration-color: var(--rust);
+  }
+
+  .flag-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--rust);
+    letter-spacing: 0.08em;
+    margin-top: 0.4rem;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--rust);
+  }
+
+  /* ── PHILOSOPHY PILLARS ── */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 4rem;
+    background: var(--line);
+  }
+
+  .pillar {
+    background: var(--parchment);
+    padding: 3rem 2.5rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .pillar:hover { background: var(--warm-white); }
+
+  .pillar-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .pillar-title {
+    font-size: 1.6rem;
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .pillar-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--dim);
+    font-weight: 300;
+  }
+
+  .pillar-greek {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    font-size: 3rem;
+    color: rgba(15,14,12,0.06);
+    font-style: italic;
+    line-height: 1;
+  }
+
+  /* ── LIFECYCLE ── */
+  .lifecycle { background: var(--warm-white); }
+
+  .lifecycle-flow {
+    margin-top: 4rem;
+    position: relative;
+  }
+
+  .lifecycle-flow::before {
+    content: '';
+    position: absolute;
+    left: 2.5rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  .lifecycle-stage {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .lifecycle-stage.animate {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  .lifecycle-stage.animate.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .stage-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.2rem;
+  }
+
+  .stage-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--warm-white);
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  .stage-dot.active {
+    background: var(--gold);
+  }
+
+  .stage-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+
+  .stage-content {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lifecycle-stage:last-child .stage-content {
+    border-bottom: none;
+  }
+
+  .stage-title {
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+  }
+
+  .stage-title span {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .stage-desc {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--dim);
+    font-weight: 300;
+    max-width: 620px;
+  }
+
+  .stage-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .stage-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--line-gold);
+    color: var(--gold);
+  }
+
+  /* ── COACH ── */
+  .coach-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .coach-rules {
+    margin-top: 2rem;
+  }
+
+  .coach-rule {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rule-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    margin-top: 0.1rem;
+  }
+
+  .rule-icon.green { background: rgba(74,92,78,0.15); color: var(--sage); }
+  .rule-icon.amber { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .rule-icon.red { background: rgba(139,58,42,0.15); color: var(--rust); }
+
+  .rule-content h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .rule-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--dim);
+    font-weight: 300;
+  }
+
+  .coach-demo {
+    position: sticky;
+    top: 7rem;
+    background: var(--ink);
+    padding: 2.5rem;
+    color: var(--parchment);
+  }
+
+  .demo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .demo-message-input {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid rgba(245,240,232,0.1);
+    padding: 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.8);
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+
+  .demo-intervention {
+    border-left: 2px solid var(--gold);
+    padding: 1rem 1.2rem;
+    background: rgba(201,168,76,0.08);
+    margin-bottom: 1rem;
+  }
+
+  .demo-intervention-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .demo-intervention p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(245,240,232,0.7);
+    font-style: italic;
+  }
+
+  .demo-actions {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .demo-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    cursor: pointer;
+  }
+
+  .demo-btn.primary { background: var(--gold); color: var(--ink); }
+  .demo-btn.ghost { background: transparent; border: 1px solid rgba(245,240,232,0.2); color: rgba(245,240,232,0.5); }
+
+  /* ── ARCHIVE ── */
+  .archive { background: var(--ink); color: var(--parchment); }
+  .archive .section-label { color: var(--gold); }
+  .archive .section-lead { color: rgba(245,240,232,0.6); }
+
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 4rem;
+    background: rgba(245,240,232,0.08);
+  }
+
+  .archive-card {
+    background: var(--ink);
+    padding: 2.5rem;
+    border: 1px solid rgba(245,240,232,0.06);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+
+  .archive-card:hover {
+    border-color: var(--line-gold);
+    background: rgba(201,168,76,0.04);
+  }
+
+  .archive-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .archive-topic {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .archive-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: var(--sage);
+    text-transform: uppercase;
+  }
+
+  .archive-card-title {
+    font-size: 1.25rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: rgba(245,240,232,0.9);
+  }
+
+  .archive-card-excerpt {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.45);
+    font-weight: 300;
+  }
+
+  .archive-card-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(245,240,232,0.08);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .archive-pseudonyms {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    color: rgba(245,240,232,0.3);
+  }
+
+  .archive-aporia {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* ── YEAR IN REVIEW ── */
+  .review-section {
+    background: var(--warm-white);
+  }
+
+  .review-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .review-card {
+    padding: 2rem;
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .review-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .review-card:hover::before { transform: scaleX(1); }
+
+  .review-card-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+    opacity: 0.7;
+  }
+
+  .review-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .review-card-desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--dim);
+    font-weight: 300;
+  }
+
+  /* ── BUSINESS MODEL ── */
+  .business {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+  }
+
+  .commitment-list {
+    margin-top: 2.5rem;
+  }
+
+  .commitment-item {
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .commitment-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--sage);
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+
+  .commitment-mark.never { color: var(--rust); }
+
+  .commitment-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--dim);
+  }
+
+  .commitment-text strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .pricing-tiers {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .tier {
+    border: 1px solid var(--line);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .tier:hover { border-color: var(--gold); }
+
+  .tier.featured {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.04);
+  }
+
+  .tier-badge {
+    position: absolute;
+    top: -0.6rem;
+    right: 1.5rem;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .tier-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .tier-price {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .tier-price span {
+    font-size: 1rem;
+    color: var(--dim);
+  }
+
+  .tier-desc {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--dim);
+    font-weight: 300;
+  }
+
+  /* ── COLLABORATORS ── */
+  .collaborators {
+    background: var(--ink);
+    color: var(--parchment);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .collaborators::before {
+    content: 'JOIN';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(245,240,232,0.02);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .collaborators .section-label { color: var(--gold); justify-content: center; }
+  .collaborators .section-label::before { display: none; }
+  .collaborators .section-title { color: var(--parchment); }
+  .collaborators .section-lead { color: rgba(245,240,232,0.6); margin: 0 auto 4rem; }
+
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(245,240,232,0.06);
+    margin-bottom: 4rem;
+    text-align: left;
+  }
+
+  .role-card {
+    background: var(--ink);
+    padding: 2.5rem;
+    border: 1px solid rgba(245,240,232,0.06);
+    transition: border-color 0.3s;
+  }
+
+  .role-card:hover { border-color: var(--line-gold); }
+
+  .role-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .role-title {
+    font-size: 1.3rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(245,240,232,0.9);
+    margin-bottom: 0.8rem;
+  }
+
+  .role-desc {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.45);
+    font-weight: 300;
+  }
+
+  .collab-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .collab-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+
+  .founder-note {
+    margin-top: 4rem;
+    padding: 3rem;
+    border: 1px solid rgba(245,240,232,0.08);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .founder-note-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .founder-note p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.65);
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .founder-sig {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: rgba(245,240,232,0.4);
+    margin-top: 1.5rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 6rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .footer-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.animate {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .fade-in.animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 8rem 2rem 4rem; }
+    section { padding: 4rem 2rem; }
+    .origin { grid-template-columns: 1fr; gap: 3rem; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .archive-grid { grid-template-columns: 1fr; }
+    .review-cards { grid-template-columns: 1fr 1fr; }
+    .coach-section { grid-template-columns: 1fr; }
+    .business { grid-template-columns: 1fr; gap: 3rem; }
+    .roles-grid { grid-template-columns: 1fr; }
+    .section-divider { padding: 0 2rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">The Dojo</a>
+  <ul class="nav-links">
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#topic-creation">Topic Creation</a></li>
+    <li><a href="#lifecycle">How It Works</a></li>
+    <li><a href="#archive">The Archive</a></li>
+    <li><a href="#business">Model</a></li>
+    <li><a href="#join">Join Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">A Blueprint · v0.2 · Building in Public</div>
+    <h1 class="hero-title">
+      A Dojo for<br>
+      <em>Epistemic</em><br>
+      Practice
+    </h1>
+    <p class="hero-subtitle">
+      Not a debate platform. Not a social network. A place where the world's live questions become the entry point — and the discipline of genuinely not knowing becomes the practice.
+    </p>
+    <div class="hero-cta-group">
+      <a href="#join" class="btn-primary">Collaborate With Us</a>
+      <a href="#lifecycle" class="btn-secondary">Read the Blueprint</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-diagram">
+      <div class="diagram-circle"></div>
+      <div class="diagram-circle"></div>
+      <div class="diagram-circle"></div>
+      <div class="diagram-center">
+        <div class="diagram-center-word">The Method</div>
+        <div class="diagram-center-main">Aporia</div>
+        <div class="diagram-center-word">ἀπορία</div>
+      </div>
+    </div>
+    <div class="hero-bg-text">∅</div>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Origin</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- ORIGIN -->
+<section class="origin" id="origin">
+  <div>
+    <div class="section-label">Where This Began</div>
+    <h2 class="section-title">A dialogue that <em>died</em> before it started</h2>
+    <p class="section-lead" style="margin-bottom:2rem;">
+      A friend and I sat down to practice Socratic dialogue about religion. Within two minutes, he said: "I already know it's man-made. I just want to hear your views."
+    </p>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,240,232,0.55);font-weight:300;">
+      That wasn't a failure of character. It was a failure of training. Almost nobody is ever taught how to hold a view and question it simultaneously — to treat their own certainty as something worth examining rather than defending. We've built extraordinary platforms for broadcasting opinions. Almost none for questioning them.
+    </p>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,240,232,0.55);font-weight:300;margin-top:1rem;">
+      The world is full of live questions right now — about war, legitimacy, power, and harm. People have strong views on all of them. The Dojo starts there — with the questions the world is actually asking — and works backward to what those positions reveal about how we think. Not to change what you believe. To change how carefully you hold it.
+    </p>
+  </div>
+  <div class="dialogue-mockup">
+    <div class="dialogue-message">
+      <div class="msg-label">You</div>
+      <div>
+        <div class="msg-text">What would it mean for a religious belief to be genuinely true — and how could we even begin to know?</div>
+      </div>
+    </div>
+    <div class="dialogue-message">
+      <div class="msg-label">Friend</div>
+      <div>
+        <div class="msg-text flagged">I already know religion is man-made. I just want to hear your views.</div>
+        <div class="flag-note">This is a position, not an inquiry. Socratic dialogue begins from genuine curiosity.</div>
+      </div>
+    </div>
+    <div class="dialogue-message">
+      <div class="msg-label">Dojo</div>
+      <div>
+        <div class="msg-text" style="color:rgba(201,168,76,0.8);font-style:normal;">What if instead you asked: what evidence would change your mind?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Philosophy</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="section-label">The Foundation</div>
+  <h2 class="section-title">What Socratic Dialogue <em>Actually</em> Is</h2>
+  <p class="section-lead">The Socratic method is not asking questions. It is a specific posture toward truth — one that requires holding your own view loosely enough to be genuinely moved by a better argument.</p>
+
+  <div class="pillars-grid">
+    <div class="pillar fade-in">
+      <span class="pillar-number">01 — Elenchus</span>
+      <h3 class="pillar-title">Testing the Limits of What You Know</h3>
+      <p class="pillar-text">Drawing out the implications of a claim until a contradiction appears. Not to embarrass — but because contradiction is where real thinking begins. The goal is not to win. It is to find the crack in your own foundation.</p>
+      <div class="pillar-greek">ἔλεγχος</div>
+    </div>
+    <div class="pillar fade-in" style="transition-delay:0.1s;">
+      <span class="pillar-number">02 — Aporia</span>
+      <h3 class="pillar-title">The Productive State of Not-Knowing</h3>
+      <p class="pillar-text">Confusion is not failure here. It is the destination. Most of our conversations are engineered to avoid aporia. The Dojo is designed to pursue it — because a better question is always more valuable than a comfortable answer.</p>
+      <div class="pillar-greek">ἀπορία</div>
+    </div>
+    <div class="pillar fade-in" style="transition-delay:0.2s;">
+      <span class="pillar-number">03 — Maieutics</span>
+      <h3 class="pillar-title">Drawing Out Rather Than Pouring In</h3>
+      <p class="pillar-text">Socrates called himself a midwife of ideas. The questioner does not teach — they help their partner give birth to what was already inside them. You are not here to convince. You are here to illuminate.</p>
+      <div class="pillar-greek">μαιευτική</div>
+    </div>
+  </div>
+
+  <div style="margin-top:4rem;padding:3rem;background:var(--warm-white);border-left:3px solid var(--gold);max-width:700px;" class="fade-in">
+    <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">The Core Commitment</div>
+    <p style="font-size:1.3rem;line-height:1.6;font-weight:300;font-style:italic;">We are not trying to change what people believe. We are trying to change how they hold their beliefs — starting from the questions the world is already forcing them to ask.</p>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Topic Creation</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- TOPIC CREATION -->
+<section id="topic-creation" style="background:var(--ink);color:var(--parchment);">
+  <div class="section-label" style="color:var(--gold);">Before the Dialogue Begins</div>
+  <h2 class="section-title" style="color:var(--parchment);">From the <em>World's Questions</em> to Yours</h2>
+  <p class="section-lead" style="color:rgba(245,240,232,0.6);max-width:660px;margin-bottom:4rem;">The Dojo doesn't start with a curated topic list. It starts with what is actually happening — and works backward to what those events reveal about how we think. Every dialogue topic originates in the world, not in the academy.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;">
+
+    <!-- Left: The 4-phase flow -->
+    <div>
+      <div style="display:flex;flex-direction:column;gap:0;position:relative;">
+        <div style="position:absolute;left:1.5rem;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold),transparent);"></div>
+
+        <div style="display:grid;grid-template-columns:3rem 1fr;gap:2rem;margin-bottom:3rem;position:relative;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-top:0.2rem;">
+            <div style="width:14px;height:14px;border-radius:50%;background:var(--gold);position:relative;z-index:2;flex-shrink:0;"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:var(--gold);">01</div>
+          </div>
+          <div style="padding-bottom:2rem;border-bottom:1px solid rgba(245,240,232,0.08);">
+            <h3 style="font-size:1.2rem;font-weight:400;margin-bottom:0.5rem;">Event Recognition — <em style="color:var(--rust);">The Editorial Moment</em></h3>
+            <p style="font-size:0.9rem;line-height:1.7;color:rgba(245,240,232,0.5);font-weight:300;">A world event with genuine philosophical depth is identified by an editor or core team member. Not every news story qualifies — only those where the public disagreement reveals something deeper than factual dispute. The editor opens a topic, writes a framing statement, and enables stance collection. AI assists in scanning public discourse — social media, comment threads, op-eds — to surface the range of reasoning already in circulation.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;">
+              <div class="stage-tag">Editorial Judgment</div>
+              <div class="stage-tag">AI Discourse Scan</div>
+              <div class="stage-tag">Philosophical Depth Test</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:3rem 1fr;gap:2rem;margin-bottom:3rem;position:relative;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-top:0.2rem;">
+            <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:var(--ink);position:relative;z-index:2;flex-shrink:0;"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:var(--gold);">02</div>
+          </div>
+          <div style="padding-bottom:2rem;border-bottom:1px solid rgba(245,240,232,0.08);">
+            <h3 style="font-size:1.2rem;font-weight:400;margin-bottom:0.5rem;">Stance Collection — <em style="color:var(--rust);">The Raw Material</em></h3>
+            <p style="font-size:0.9rem;line-height:1.7;color:rgba(245,240,232,0.5);font-weight:300;">Users are invited to submit their position and — crucially — their reasoning. Not a poll. Not a vote. A structured declaration: here is what I think, and here is the specific factor that most drives that view. The platform presents a range of resonance factors drawn from public discourse, and users identify which one pulls on them most. This is not debate fodder — it is the raw material for philosophical excavation.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;">
+              <div class="stage-tag">Resonance Factors</div>
+              <div class="stage-tag">Reasoning Capture</div>
+              <div class="stage-tag">Non-Adversarial Framing</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:3rem 1fr;gap:2rem;margin-bottom:3rem;position:relative;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-top:0.2rem;">
+            <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:var(--ink);position:relative;z-index:2;flex-shrink:0;"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:var(--gold);">03</div>
+          </div>
+          <div style="padding-bottom:2rem;border-bottom:1px solid rgba(245,240,232,0.08);">
+            <h3 style="font-size:1.2rem;font-weight:400;margin-bottom:0.5rem;">Philosophical Excavation — <em style="color:var(--rust);">AI + Editorial</em></h3>
+            <p style="font-size:0.9rem;line-height:1.7;color:rgba(245,240,232,0.5);font-weight:300;">The AI processes submissions: clustering the reasoning into distinct philosophical positions, identifying the faultlines, and suggesting the underlying questions those positions imply but never explicitly ask. An editor reviews, refines, and approves. The goal is not to represent "both sides" — it is to find the questions that genuinely open under examination, rather than close once you bring in the right facts. Each approved thread becomes a dialogue topic.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;">
+              <div class="stage-tag">AI Clustering</div>
+              <div class="stage-tag">Philosophical Thread Derivation</div>
+              <div class="stage-tag">Editorial Approval</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:3rem 1fr;gap:2rem;position:relative;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-top:0.2rem;">
+            <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:var(--ink);position:relative;z-index:2;flex-shrink:0;"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:var(--gold);">04</div>
+          </div>
+          <div>
+            <h3 style="font-size:1.2rem;font-weight:400;margin-bottom:0.5rem;">Notification — <em style="color:var(--rust);">The Reframe</em></h3>
+            <p style="font-size:0.9rem;line-height:1.7;color:rgba(245,240,232,0.5);font-weight:300;">Users who submitted stances are notified — but not with "your side is ready to debate." The notification does a specific reframe: "your reasoning pointed toward this question — we think it's worth genuinely exploring." They arrive already invested, already having articulated something, but now oriented toward inquiry rather than advocacy. The motivation to engage is built in from the start.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;">
+              <div class="stage-tag">Invested Entry</div>
+              <div class="stage-tag">The Reframe Notification</div>
+              <div class="stage-tag">Inquiry vs. Advocacy</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right: Example topic card -->
+    <div>
+      <div style="position:sticky;top:7rem;">
+        <div style="background:rgba(245,240,232,0.04);border:1px solid rgba(245,240,232,0.1);padding:2.5rem;margin-bottom:1.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--rust);margin-bottom:1.5rem;">Live Topic — Stance Collection Open</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;">Anchor Question</div>
+          <p style="font-size:1.15rem;line-height:1.5;font-style:italic;color:rgba(245,240,232,0.9);margin-bottom:2rem;">"Are America and Israel right to bomb Iran?"</p>
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:1rem;">Which factor resonates most with your view?</div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:2rem;">
+            <div style="padding:0.9rem 1.1rem;border:1px solid rgba(245,240,232,0.1);font-size:0.85rem;color:rgba(245,240,232,0.6);cursor:pointer;transition:all 0.2s;">Preemptive action is justified when a threat is credible and imminent</div>
+            <div style="padding:0.9rem 1.1rem;border:1px solid var(--gold);background:rgba(201,168,76,0.06);font-size:0.85rem;color:rgba(245,240,232,0.85);">The civilian harm threshold has already been crossed — intent doesn't matter</div>
+            <div style="padding:0.9rem 1.1rem;border:1px solid rgba(245,240,232,0.1);font-size:0.85rem;color:rgba(245,240,232,0.6);">Sovereignty is being used as a shield — it can't be treated as absolute</div>
+            <div style="padding:0.9rem 1.1rem;border:1px solid rgba(245,240,232,0.1);font-size:0.85rem;color:rgba(245,240,232,0.6);">No democracy has the right to act without transparent justification to its citizens</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:rgba(245,240,232,0.2);margin-bottom:0.5rem;">Your reasoning (optional but valuable)</div>
+          <div style="background:rgba(245,240,232,0.04);border:1px solid rgba(245,240,232,0.08);padding:0.8rem;font-size:0.85rem;color:rgba(245,240,232,0.25);font-style:italic;">What specifically makes you feel that way...</div>
+        </div>
+
+        <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:2rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Derived Dialogue Threads — After Editorial Review</div>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="padding:0.8rem 1rem;background:rgba(245,240,232,0.04);border-left:2px solid var(--gold);">
+              <p style="font-size:0.8rem;line-height:1.5;color:rgba(245,240,232,0.7);font-style:italic;">"When does civilian harm become morally disqualifying — regardless of intent?"</p>
+            </div>
+            <div style="padding:0.8rem 1rem;background:rgba(245,240,232,0.04);border-left:2px solid rgba(201,168,76,0.4);">
+              <p style="font-size:0.8rem;line-height:1.5;color:rgba(245,240,232,0.7);font-style:italic;">"On what grounds can a state claim the right to act preemptively?"</p>
+            </div>
+            <div style="padding:0.8rem 1rem;background:rgba(245,240,232,0.04);border-left:2px solid rgba(201,168,76,0.2);">
+              <p style="font-size:0.8rem;line-height:1.5;color:rgba(245,240,232,0.7);font-style:italic;">"Does a democracy have a distinct moral obligation to justify war to its citizens?"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Lifecycle</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- LIFECYCLE -->
+<section class="lifecycle" id="lifecycle">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">The Full Lifecycle of <em>One Dialogue</em></h2>
+  <p class="section-lead">From the moment a user arrives to the moment a conversation enters the archive — every stage is designed with the philosophy in mind, not just the product.</p>
+
+  <div class="lifecycle-flow">
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot active"></div>
+        <div class="stage-num">00</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">Onboarding — <span>The Threshold</span></h3>
+        <p class="stage-desc">Before anything else, users encounter the philosophy. Not a tutorial. A genuine introduction to what Socratic dialogue is, what it feels like from the inside, and what distinguishes it from debate. Annotated example dialogues. A practice session with an AI that models ideal behavior. And a moment of intentional friction: a private declaration that you're here to explore, not to win. Intentional friction at the threshold changes how people enter a space.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">AI Practice Dialogue</div>
+          <div class="stage-tag">Epistemic Baseline</div>
+          <div class="stage-tag">Commitment Moment</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot active"></div>
+        <div class="stage-num">01</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">Topic Entry — <span>Arriving with a Stake</span></h3>
+        <p class="stage-desc">Users don't pick from an abstract menu. They arrive via notification — because they already submitted a stance on a live world event. The topic they enter is one the platform derived from their own reasoning. They know why they care. They see their resonance factor reflected back as a genuine philosophical question rather than a debating position. They declare a tentative certainty rating and answer the most important question on the platform: what is the question within this topic you find most genuinely unresolved for yourself?</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Notified Entry</div>
+          <div class="stage-tag">Resonance-to-Question Reframe</div>
+          <div class="stage-tag">Uncertainty Rating</div>
+          <div class="stage-tag">Unresolved Question Field</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot"></div>
+        <div class="stage-num">02</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">Matching — <span>Complementary Curiosity</span></h3>
+        <p class="stage-desc">Not an algorithm that finds your opposite. One that finds your complementary inquirer — someone whose genuine questions meet yours in a way that creates productive tension without destructive friction. Matching weighs uncertainty complementarity, engagement style compatibility, topic freshness, experience balance, and the unresolved question field. Two people who both genuinely don't know are a better match than two people who both think they do. The matching logic is never shown to users — the only evidence of its quality is the dialogue it produces.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Behavioral Profiling</div>
+          <div class="stage-tag">Uncertainty Matching</div>
+          <div class="stage-tag">Experience Balancing</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot"></div>
+        <div class="stage-num">03</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">The Opening Move — <span>A Hard Rule</span></h3>
+        <p class="stage-desc">Neither user can make a statement in their first message. The opening must be a question. This is a hard rule, not a suggestion. It immediately signals that this is a different kind of conversation and forces both people to begin from curiosity rather than position.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Question-Only Opening</div>
+          <div class="stage-tag">No Statements</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot"></div>
+        <div class="stage-num">04</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">The Dialogue — <span>Slow by Design</span></h3>
+        <p class="stage-desc">No real-time chat. Messages are like letters — composed, reflected upon, sent. The platform is explicitly slow and that slowness is a virtue. Users can have 2–3 active dialogues simultaneously and can signal when they need time away without abandoning the conversation. The AI coach watches silently and speaks only when something important is happening — never praising, always asking, always brief. The absence of a nudge is the signal that you're doing well.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Asynchronous</div>
+          <div class="stage-tag">AI Coaching</div>
+          <div class="stage-tag">2–3 Concurrent Dialogues</div>
+          <div class="stage-tag">Away Signal</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot"></div>
+        <div class="stage-num">05</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">Closing — <span>Mutual Agreement</span></h3>
+        <p class="stage-desc">Either user can propose to close, but closing requires mutual agreement. This prevents unilateral abandonment when things get hard — which is often precisely when the most productive discomfort is available. Users each complete a private post-dialogue reflection before seeing each other's: where did your certainty land? What was the hardest question you encountered — the one you couldn't fully answer? Did your goalpost move? And: what question do you leave this dialogue still carrying? That last question matters. It sends the user back into the world with something unresolved.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Mutual Close</div>
+          <div class="stage-tag">Private Reflection</div>
+          <div class="stage-tag">Goalpost Assessment</div>
+          <div class="stage-tag">The Carried Question</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lifecycle-stage">
+      <div class="stage-marker">
+        <div class="stage-dot"></div>
+        <div class="stage-num">06</div>
+      </div>
+      <div class="stage-content">
+        <h3 class="stage-title">After — <span>The Archive Decision</span></h3>
+        <p class="stage-desc">Both users see their own reflection summarized. Over time this becomes a personal archive of intellectual development. Then the publishing question is raised — gently, never as a default. Both must consent. If they do, the dialogue enters the community review queue. The reviewing community — invited, not self-selected — evaluates for a single thing: is there at least one moment where you can see a mind genuinely not knowing how to proceed? That is the bar for the archive.</p>
+        <div class="stage-tags">
+          <div class="stage-tag">Personal Archive</div>
+          <div class="stage-tag">Dual Consent</div>
+          <div class="stage-tag">Community Review</div>
+          <div class="stage-tag">Aporia Threshold</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">The Coach</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- COACHING -->
+<section id="coach">
+  <div class="coach-section">
+    <div>
+      <div class="section-label">The AI Coach</div>
+      <h2 class="section-title">A Whisper at the <em>Edge</em> of the Dialogue</h2>
+      <p class="section-lead" style="margin-bottom:2rem;">Not a moderator. Not a teacher. Something closer to a skilled editor — whose interventions you barely notice until you realize your thinking just got sharper.</p>
+      <p style="font-size:0.95rem;line-height:1.7;color:var(--dim);font-weight:300;">The coach has one job: protect the integrity of the method without replacing the user's agency. It is blind to what you believe and only sees how you are engaging. It never evaluates the content of beliefs — only the form of engagement.</p>
+
+      <div class="coach-rules">
+        <div class="coach-rule fade-in">
+          <div class="rule-icon green">✓</div>
+          <div class="rule-content">
+            <h4>Green — Passes Without Comment</h4>
+            <p>Genuine open questions, acknowledgment of the partner's point, expressions of uncertainty, requests for clarification, identifying the limits of one's own position. The silence itself is the signal that you're doing well.</p>
+          </div>
+        </div>
+        <div class="coach-rule fade-in">
+          <div class="rule-icon amber">~</div>
+          <div class="rule-content">
+            <h4>Amber — Pre-Send Nudge</h4>
+            <p>Declarative drift, rhetorical questions, thread abandonment, monologuing. A brief prompt appears before the send button. One sentence. Always a question. Never blocking — just present. The friction is the point, not the blockage.</p>
+          </div>
+        </div>
+        <div class="coach-rule fade-in">
+          <div class="rule-icon red">!</div>
+          <div class="rule-content">
+            <h4>Red — Brief Human Review</h4>
+            <p>Personal attacks, deliberate contempt, clear bad faith. Held briefly with a direct prompt. If the user still wants to send, it goes to the human review queue — fast turnaround, minutes not hours. Appeal is always one tap away.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:2rem;padding:1.5rem;background:var(--warm-white);border:1px solid var(--line);">
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;">What the Coach Never Does</div>
+        <p style="font-size:0.85rem;line-height:1.7;color:var(--dim);font-weight:300;">Never evaluates the content of beliefs. Never reveals its coaching to your partner. Never praises. Never apologizes for intervening. Never assumes bad faith. It speaks in second person without accusation, asks rather than tells, and is never more than two sentences.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="coach-demo">
+        <div class="demo-label">Coach Intervention — Example</div>
+        <div class="demo-message-input">
+          "Religion is clearly a human construct — every religion reflects the culture and era that produced it. This is well documented in anthropology. Don't you think that settles the question?"
+        </div>
+        <div class="demo-intervention">
+          <div class="demo-intervention-label">⟡ Coach — Before You Send</div>
+          <p>"This reads more like a conclusion than a question — and the last line may be rhetorical rather than genuinely open. Is there something you're actually uncertain about underneath this?"</p>
+        </div>
+        <div class="demo-actions">
+          <button class="demo-btn primary">Revise Message</button>
+          <button class="demo-btn ghost">Send Anyway</button>
+          <button class="demo-btn ghost">Appeal</button>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding:2rem;border:1px solid var(--line);">
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">The Coach's Voice Principles</div>
+        <div style="display:flex;flex-direction:column;gap:0.8rem;">
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);flex-shrink:0;">→</div>
+            <p style="font-size:0.85rem;color:var(--dim);font-weight:300;">Second person without accusation: "This reads as..." not "You are doing..."</p>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);flex-shrink:0;">→</div>
+            <p style="font-size:0.85rem;color:var(--dim);font-weight:300;">Asks rather than tells: "Is there a question underneath this?" not "Rephrase as a question."</p>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);flex-shrink:0;">→</div>
+            <p style="font-size:0.85rem;color:var(--dim);font-weight:300;">Always brief. Never more than two sentences. The dialogue is the thing.</p>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--gold);flex-shrink:0;">→</div>
+            <p style="font-size:0.85rem;color:var(--dim);font-weight:300;">Assumes good faith always. Drift is human and expected. The coach knows this.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">The Archive</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- ARCHIVE -->
+<section class="archive" id="archive">
+  <div class="section-label">The Living Library</div>
+  <h2 class="section-title" style="color:var(--parchment);">A Record of Minds <em>Wrestling</em></h2>
+  <p class="section-lead">Not polished academic papers. Not debate transcripts. Raw, honest, often stumbling inquiry — the kind that actually reflects how difficult thinking works. A curated archive of genuine Socratic dialogues that doesn't exist anywhere.</p>
+
+  <div class="archive-grid">
+    <div class="archive-card">
+      <div class="archive-card-meta">
+        <div class="archive-topic">War & Legitimacy</div>
+        <div class="archive-status">⟡ Aporia Reached</div>
+      </div>
+      <div class="archive-card-title">"When does civilian harm become morally disqualifying — regardless of the intention behind it?"</div>
+      <div class="archive-card-excerpt">Derived from the Iran bombing debate. Began with one participant certain about proportionality doctrine. By exchange eleven, neither could agree on what "harm" was even being measured...</div>
+      <div class="archive-card-footer">
+        <div class="archive-pseudonyms">Threshold × Quietwater</div>
+        <div class="archive-aporia">14 exchanges</div>
+      </div>
+    </div>
+    <div class="archive-card">
+      <div class="archive-card-meta">
+        <div class="archive-topic">Democratic Obligation</div>
+        <div class="archive-status">⟡ Aporia Reached</div>
+      </div>
+      <div class="archive-card-title">"Does a democracy have a distinct moral obligation to justify military action to its own citizens?"</div>
+      <div class="archive-card-excerpt">Two people who began certain they disagreed discovered by exchange nine that they were uncertain about entirely different things — what counts as justification, and to whom it's owed...</div>
+      <div class="archive-card-footer">
+        <div class="archive-pseudonyms">Lanternfish × Ironwood</div>
+        <div class="archive-aporia">21 exchanges</div>
+      </div>
+    </div>
+    <div class="archive-card">
+      <div class="archive-card-meta">
+        <div class="archive-topic">Sovereignty</div>
+        <div class="archive-status">⟡ Open Thread</div>
+      </div>
+      <div class="archive-card-title">"Can sovereignty function as a moral shield — or only as a legal one?"</div>
+      <div class="archive-card-excerpt">The dialogue paused at exchange 11 when both participants realized they had been using the word "sovereignty" to mean fundamentally different things. It hasn't resumed yet...</div>
+      <div class="archive-card-footer">
+        <div class="archive-pseudonyms">Meridian × Saltwing</div>
+        <div class="archive-aporia">11 exchanges</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:3rem;padding:2.5rem;border:1px solid rgba(245,240,232,0.08);max-width:700px;" class="fade-in">
+    <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Archive Eligibility</div>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,240,232,0.55);font-weight:300;">Both participants consent. A community reviewer confirms at least one moment of genuine not-knowing. The bar is high — by design. A hundred extraordinary dialogues is more valuable than a thousand mediocre ones. No likes, no upvotes, no engagement metrics. The archive is a record, not a popularity contest.</p>
+  </div>
+
+  <div style="margin-top:3rem;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:2rem;">Pseudonym System</div>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,240,232,0.45);font-weight:300;max-width:640px;">Every user has a permanent anonymous identity — a pseudonym chosen at onboarding that travels with them forever. Not a username. More like a pen name. It accumulates history, carries a body of work, creates intellectual reputation without exposing personal identity. Pseudonyms are permanent and non-transferable. You cannot abandon one with a bad record and start fresh.</p>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Year in Review</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- YEAR IN REVIEW -->
+<section class="review-section">
+  <div class="section-label">Annual Reflection</div>
+  <h2 class="section-title">Not Spotify Wrapped. <em>A Letter to Yourself.</em></h2>
+  <p class="section-lead">Not about volume. Not about how many words you wrote or dialogues you started. About depth, movement, and the questions you couldn't shake.</p>
+
+  <div class="review-cards">
+    <div class="review-card fade-in">
+      <span class="review-card-icon">∿</span>
+      <div class="review-card-title">Questions You Carried</div>
+      <p class="review-card-desc">The unresolved questions that appeared most consistently across your year of dialogues. Not topics — specific questions. A window into where your thinking actually lives.</p>
+    </div>
+    <div class="review-card fade-in" style="transition-delay:0.1s;">
+      <span class="review-card-icon">◈</span>
+      <div class="review-card-title">Goalpost Movement</div>
+      <p class="review-card-desc">The moments your certainty shifted — and what triggered it. A narrative of intellectual movement across twelve months of genuine inquiry.</p>
+    </div>
+    <div class="review-card fade-in" style="transition-delay:0.2s;">
+      <span class="review-card-icon">⟡</span>
+      <div class="review-card-title">Your Hardest Moment</div>
+      <p class="review-card-desc">The single exchange across all your dialogues that your own reflection identified as the question you genuinely could not answer. A reminder of what not-knowing felt like.</p>
+    </div>
+    <div class="review-card fade-in" style="transition-delay:0.3s;">
+      <span class="review-card-icon">↔</span>
+      <div class="review-card-title">Your Partner in Inquiry</div>
+      <p class="review-card-desc">The pseudonym whose questioning most genuinely moved your thinking this year. Acknowledged without sentimentality. Just: this person made you think harder.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">The Model</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- BUSINESS -->
+<section id="business">
+  <div class="business">
+    <div>
+      <div class="section-label">How We Sustain This</div>
+      <h2 class="section-title">Built for <em>Depth</em>, Not Scale</h2>
+      <p class="section-lead" style="margin-bottom:1rem;">A community of ten thousand serious practitioners is worth more than a million casual ones. We are not chasing venture scale. We are building something that lasts.</p>
+      <p style="font-size:0.95rem;line-height:1.7;color:var(--dim);font-weight:300;margin-bottom:2rem;">This is a subscription business. Not freemium designed to frustrate — a genuine free introduction, and a subscription that unlocks the full practice for people who are serious about it.</p>
+
+      <div class="pricing-tiers">
+        <div class="tier">
+          <div class="tier-name">Free Introduction</div>
+          <div class="tier-price">$0 <span>/ forever</span></div>
+          <p class="tier-desc">Onboarding, AI practice dialogue, and up to four real dialogues. Enough to know whether this is for you. Not crippled — genuinely introductory.</p>
+        </div>
+        <div class="tier featured">
+          <div class="tier-badge">Full Practice</div>
+          <div class="tier-name">Practitioner</div>
+          <div class="tier-price">$12 <span>/ month</span></div>
+          <p class="tier-desc">Unlimited dialogues, full archive access, year in review, published dialogue eligibility, ability to request to continue archived threads.</p>
+        </div>
+        <div class="tier">
+          <div class="tier-name">Institutional</div>
+          <div class="tier-price">Contact <span>us</span></div>
+          <p class="tier-desc">Universities, philosophy departments, leadership programs. Group access for courses, seminars, or organizational epistemic training. Our most aligned early partners.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Our Commitments</div>
+      <h2 class="section-title" style="font-size:2rem;">What We Will <em>Never</em> Do</h2>
+      <div class="commitment-list">
+        <div class="commitment-item">
+          <div class="commitment-mark never">✕</div>
+          <p class="commitment-text"><strong>Sell advertising.</strong> Advertising requires optimizing for attention. We are explicitly building against that.</p>
+        </div>
+        <div class="commitment-item">
+          <div class="commitment-mark never">✕</div>
+          <p class="commitment-text"><strong>Sell or license user data.</strong> The behavioral profiles we build are among the most intimate intellectual records a platform has created. They serve your practice. Nothing else.</p>
+        </div>
+        <div class="commitment-item">
+          <div class="commitment-mark never">✕</div>
+          <p class="commitment-text"><strong>Introduce engagement mechanics.</strong> No streaks. No notification pressure. No algorithmic feed. If you don't open the app for two weeks, that's fine.</p>
+        </div>
+        <div class="commitment-item">
+          <div class="commitment-mark never">✕</div>
+          <p class="commitment-text"><strong>Pursue growth for its own sake.</strong> We will resist every pressure — investor, media, cultural — to optimize for monthly active users over quality of practice.</p>
+        </div>
+        <div class="commitment-item">
+          <div class="commitment-mark never">✕</div>
+          <p class="commitment-text"><strong>Take venture capital.</strong> VC requires growth trajectories incompatible with a platform designed to be slow, selective, and quality-driven.</p>
+        </div>
+        <div class="commitment-item">
+          <div class="commitment-mark">✓</div>
+          <p class="commitment-text"><strong>Build in public.</strong> Every significant decision, mistake, and evolution of this blueprint will be shared openly. We cannot build a platform about intellectual honesty while being opaque about our own process.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">Join</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- COLLABORATORS -->
+<section class="collaborators" id="join">
+  <div class="section-label">Building in Public</div>
+  <h2 class="section-title" style="margin-bottom:1rem;">We're Looking for <em>Practitioners</em></h2>
+  <p class="section-lead">Not just builders. People who find this as philosophically important as it is technically interesting. The dojo needs people who want to practice the discipline, not just ship the product.</p>
+
+  <div class="roles-grid">
+    <div class="role-card">
+      <div class="role-name">01 — Editorial</div>
+      <div class="role-title">The Philosophical Journalists</div>
+      <p class="role-desc">People who can read a live world event, scan the public discourse around it, and find the genuine philosophical faultlines hiding inside it. Part journalist, part philosopher, part product designer. The quality of the platform lives or dies on how well this work gets done. This role did not exist before the Dojo.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">02 — Philosophy</div>
+      <div class="role-title">The Intellectual Architects</div>
+      <p class="role-desc">Philosophers, academics, people who've thought seriously about epistemology, Socratic method, or the ethics of dialogue. Your job is to tell us when the product is getting the philosophy wrong — including when business pressure is distorting the mission.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">03 — Design</div>
+      <div class="role-title">The Experience Shapers</div>
+      <p class="role-desc">Designers who understand that restraint is a choice, slowness is a feature, and that the best interface for this platform is one that gets out of the way of the thinking. No gamification. No dark patterns. Just craft.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">04 — Engineering</div>
+      <div class="role-title">The Builders</div>
+      <p class="role-desc">Developers who can build the coaching layer, the matching engine, and the archive with the same care we're putting into the philosophy. Full-stack, AI/ML, mobile. People who are interested in what they're building, not just how.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">05 — Research</div>
+      <div class="role-title">The Validators</div>
+      <p class="role-desc">Researchers in cognitive science, behavioral psychology, or discourse studies who want to study whether this actually works — whether epistemic practice at scale can change how people hold their beliefs.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">06 — Community</div>
+      <div class="role-title">The Culture Keepers</div>
+      <p class="role-desc">People who understand community building as a philosophical project, not just a growth function. The dojo's culture is its product. This role is as important as any technical one.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-name">07 — Curious</div>
+      <div class="role-title">The Honest Skeptics</div>
+      <p class="role-desc">People who think this might not work, have real objections, and want to say so. We need people willing to tell us where this concept is philosophically unsound. Early critics are as valuable as early believers.</p>
+    </div>
+  </div>
+
+  <div class="collab-cta">
+    <a href="/cdn-cgi/l/email-protection#91f9f4fdfdfed1e5f9f4f5fefbfebff0e1e1" class="btn-primary" style="font-size:0.9rem;padding:1.2rem 3rem;">Get in Touch</a>
+    <div class="collab-note">Or find us building in public on LinkedIn · Mohammad Dayem Adnan</div>
+  </div>
+
+  <div class="founder-note">
+    <div class="founder-note-label">A Note from the Founder</div>
+    <p>This started with a conversation that died before it could begin. A friend said he already knew the answer before we'd asked a single question together — and I realized that wasn't his failure. It was ours. We never built the space for anything else.</p>
+    <p>I don't have all the answers to what this becomes. The blueprint here is honest and considered, but it's still a blueprint. What I do know is that epistemic practice — the discipline of genuinely examining what you believe and why — is one of the most important things a person can develop. And it deserves a place to happen.</p>
+    <p>If you find this as important as I do, I'd like to build it with you.</p>
+    <div class="founder-sig">— Mohammad Dayem Adnan<br><span style="font-size:0.8rem;font-style:normal;font-family:'DM Mono',monospace;letter-spacing:0.08em;color:rgba(245,240,232,0.25);">Wabash '20 · Notre Dame ESTEEM '21</span></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">The Dojo · Blueprint v0.2 · Building in Public · 2025</div>
+  <div class="footer-right">ἀπορία — the productive state of not-knowing</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Intersection Observer for fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-in, .lifecycle-stage').forEach(el => {
+    el.classList.add('animate');
+    observer.observe(el);
+  });
+
+  // Stagger lifecycle stages
+ 
